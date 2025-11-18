@@ -3,31 +3,52 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerador</title>
+<title>Gerador de QR Code</title>
 <style>
-  body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
-  input { padding: 10px; width: 300px; margin-bottom: 20px; }
-  button { padding: 10px 20px; cursor: pointer; }
-  #qrcode { margin-top: 20px; }
+  body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  #qrcode {
+    margin: 20px 0;
+  }
+  input, button {
+    padding: 10px;
+    font-size: 16px;
+    margin: 5px;
+  }
 </style>
 </head>
 <body>
 
 <h1>Gerador de QR Code</h1>
+
 <input type="text" id="text" placeholder="Digite o texto ou URL">
-<button onclick="generateQRCode()">Gerar QR Code</button>
+<button id="generate">Gerar QR Code</button>
+<button id="download">Baixar QR Code</button>
 
 <div id="qrcode"></div>
 
 <!-- Biblioteca QRCode.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-  function generateQRCode() {
-    const container = document.getElementById('qrcode');
-    container.innerHTML = ''; // Limpa QR Code antigo
-    const text = document.getElementById('text').value;
-    if(!text) { alert('Digite algum texto ou URL!'); return; }
-    new QRCode(container, {
+  let qrcode;
+
+  document.getElementById("generate").addEventListener("click", () => {
+    const text = document.getElementById("text").value.trim();
+    if (!text) {
+      alert("Digite algum texto ou URL!");
+      return;
+    }
+
+    // Limpa QR Code antigo
+    document.getElementById("qrcode").innerHTML = "";
+
+    // Gera novo QR Code
+    qrcode = new QRCode(document.getElementById("qrcode"), {
       text: text,
       width: 200,
       height: 200,
@@ -35,7 +56,29 @@
       colorLight: "#ffffff",
       correctLevel: QRCode.CorrectLevel.H
     });
-  }
+  });
+
+  document.getElementById("download").addEventListener("click", () => {
+    if (!qrcode) {
+      alert("Primeiro gere o QR Code!");
+      return;
+    }
+
+    // Pode ser <img> ou <canvas>, dependendo do QRCode.js
+    const img = document.querySelector("#qrcode img") || document.querySelector("#qrcode canvas");
+    let url;
+    if (img.tagName === "IMG") {
+      url = img.src;
+    } else {
+      url = img.toDataURL("image/png");
+    }
+
+    // Cria link temporário e força download
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "qrcode.png";
+    a.click();
+  });
 </script>
 
 </body>
