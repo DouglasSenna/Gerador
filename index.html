@@ -15,11 +15,6 @@
   #qrcode {
     margin: 20px 0;
   }
-  input, button {
-    padding: 10px;
-    font-size: 16px;
-    margin: 5px;
-  }
 </style>
 </head>
 <body>
@@ -32,52 +27,55 @@
 
 <div id="qrcode"></div>
 
-<!-- Biblioteca QRCode.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <script>
-  let qrcode;
+  let qr;
 
   document.getElementById("generate").addEventListener("click", () => {
     const text = document.getElementById("text").value.trim();
     if (!text) {
-      alert("Digite algum texto ou URL!");
+      alert("Digite algum texto!");
       return;
     }
 
-    // Limpa QR Code antigo
     document.getElementById("qrcode").innerHTML = "";
 
-    // Gera novo QR Code
-    qrcode = new QRCode(document.getElementById("qrcode"), {
+    qr = new QRCode(document.getElementById("qrcode"), {
       text: text,
-      width: 200,
-      height: 200,
-      colorDark: "#000000",
-      colorLight: "#ffffff",
+      width: 256,
+      height: 256,
       correctLevel: QRCode.CorrectLevel.H
     });
   });
 
   document.getElementById("download").addEventListener("click", () => {
-    if (!qrcode) {
-      alert("Primeiro gere o QR Code!");
+    if (!qr) {
+      alert("Gere o QR Code primeiro!");
       return;
     }
 
-    // Pode ser <img> ou <canvas>, dependendo do QRCode.js
-    const img = document.querySelector("#qrcode img") || document.querySelector("#qrcode canvas");
+    const canvas = document.querySelector("#qrcode canvas");
+    const img = document.querySelector("#qrcode img");
+
     let url;
-    if (img.tagName === "IMG") {
+
+    // QRCode.js às vezes gera <canvas> e às vezes <img>
+    if (canvas) {
+      url = canvas.toDataURL("image/png");
+    } else if (img) {
       url = img.src;
     } else {
-      url = img.toDataURL("image/png");
+      alert("Erro ao gerar imagem do QR Code!");
+      return;
     }
 
-    // Cria link temporário e força download
     const a = document.createElement("a");
     a.href = url;
     a.download = "qrcode.png";
+    document.body.appendChild(a);
     a.click();
+    a.remove();
   });
 </script>
 
