@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de QR Code</title>
+<style>
+  body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+  input { padding: 10px; width: 300px; margin-bottom: 20px; }
+  button { padding: 10px 20px; cursor: pointer; }
+  #qrcode { margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<h1>Gerador de QR Code</h1>
+<input type="text" id="text" placeholder="Digite o texto ou URL">
+<button onclick="generateQRCode()">Gerar QR Code</button>
+
+<div id="qrcode"></div>
+
+<!-- Biblioteca QRCode.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  function generateQRCode() {
+    const container = document.getElementById('qrcode');
+    container.innerHTML = ''; // Limpa QR Code antigo
+    const text = document.getElementById('text').value;
+    if(!text) { alert('Digite algum texto ou URL!'); return; }
+    new QRCode(container, {
+      text: text,
+      width: 200,
+      height: 200,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  }
+</script>
+
+</body>
+</html>
